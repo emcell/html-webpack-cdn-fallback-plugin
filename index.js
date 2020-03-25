@@ -47,7 +47,7 @@ HtmlWebpackCdnFallbackPlugin.prototype.processTags = function (compilation, cdnU
   return { headTags: pluginData.headTags, bodyTags: bodyTags, plugin: pluginData.plugin, outputName: pluginData.outputName };
 };
 HtmlWebpackCdnFallbackPlugin.prototype.copyFallbackJsToOutputRoot = function (compiler){
-  const filename = path.join(__dirname, 'node_modules', 'fallbackjs', 'fallback.min.js');
+  const filename = path.resolve(__dirname, '..', 'fallbackjs', 'fallback.min.js');
   fs.copyFileSync(filename, path.join(compiler.options.output.path, 'fallback.min.js'));
   return;
 };

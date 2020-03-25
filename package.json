@@ -1,6 +1,6 @@
 {
   "name": "html-webpack-cdn-fallback-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Load all your js dependencies from a cdn and fallback to self hosting",
   "main": "index.js",
   "types": "index.d.ts",
