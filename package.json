@@ -46,6 +46,6 @@
   "dependencies": {
     "escape-string-regexp": "^1.0.5",
     "fallbackjs": "^1.1.8",
-    "nodegit": "^0.26.5",
+    "nodegit": "^0.26.5"
   }
 }
