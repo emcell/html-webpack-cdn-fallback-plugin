@@ -1,0 +1,51 @@
+{
+  "name": "html-webpack-inline-source-plugin",
+  "version": "1.0.0-beta.1",
+  "description": "Load all your js dependencies from a cdn and fallback to self hosting",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "prepublish": "npm run test",
+    "pretest": "semistandard",
+    "test": "jasmine",
+    "debug": "node-debug jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emcell/html-webpack-cdn-fallback-plugin.git"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "html-webpack-plugin",
+    "cdn",
+    "fallback",
+    "fallbackjs"
+  ],
+  "author": "Marcel Springer <marcell.springer@emcellsoft.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emcell/html-webpack-cdn-fallback-plugin/issues"
+  },
+  "homepage": "https://github.com/emcell/html-webpack-cdn-fallback-plugin",
+  "devDependencies": {
+    "cheerio": "^0.22.0",
+    "css-loader": "^0.25.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "html-webpack-plugin": "^4.0.0-beta.4",
+    "jasmine": "^2.4.1",
+    "rimraf": "^2.5.2",
+    "semistandard": "^7.0.5",
+    "style-loader": "^0.13.1",
+    "webpack": "^4.20.2"
+  },
+  "dependencies": {
+    "escape-string-regexp": "^1.0.5",
+    "fallbackjs": "^1.1.8",
+    "nodegit": "^0.26.5",
+  }
+}
