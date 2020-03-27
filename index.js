@@ -34,30 +34,25 @@ HtmlWebpackCdnFallbackPlugin.prototype.apply = function (compiler) {
 HtmlWebpackCdnFallbackPlugin.prototype.processTags = function (compilation, cdnUrl, pluginData) {
   var self = this;
 
-  const scriptTagsWithSrcAttribute = pluginData.bodyTags.filter(tag => {
-    return tag.tagName==='script' &&
-           tag.attributes && tag.attributes.src
+  const scriptTagsWithSrcAttribute = [];
+  const bodyTags = [];  
+  pluginData.bodyTags.forEach(tag => {
+    if(tag.tagName==='script' && tag.attributes && tag.attributes.src)
+      scriptTagsWithSrcAttribute.push(tag);
+    else
+      bodyTags.push(tag);
   });
-  const bodyTags = pluginData.bodyTags.filter(tag => tag.tagName!=='script');
   if(scriptTagsWithSrcAttribute.length) {
-    this.copyFallbackJsToOutputRoot(compilation);
     bodyTags.push(this.createFallbackJsScriptTag());
     bodyTags.push(this.createFallbackScriptLoaderTag(scriptTagsWithSrcAttribute, cdnUrl));
   }
   return { headTags: pluginData.headTags, bodyTags: bodyTags, plugin: pluginData.plugin, outputName: pluginData.outputName };
 };
-HtmlWebpackCdnFallbackPlugin.prototype.copyFallbackJsToOutputRoot = function (compiler){
-  const filename = path.resolve(__dirname, '..', 'fallbackjs', 'fallback.min.js');
-  fs.copyFileSync(filename, path.join(compiler.options.output.path, 'fallback.min.js'));
-  return;
-};
 HtmlWebpackCdnFallbackPlugin.prototype.createFallbackJsScriptTag = function () {
   return {
     tagName: 'script',
-    closeTag: false,
-    attributes: {
-      src: './fallback.min.js'
-    }
+    closeTag: true,
+    innerHTML: "function loadJs(urls) {const url = urls[0];urls = urls.slice(1);var scriptTag = document.createElement('script');scriptTag.src = url;if(urls.length)scriptTag.onerror=function(){loadJs(urls);};document.body.appendChild(scriptTag);}"
   }
 };
 
@@ -92,12 +87,9 @@ HtmlWebpackCdnFallbackPlugin.prototype.createFallbackScriptLoaderTag = function 
   const tag = {
     tagName: 'script',
     closeTag: true,
-    attributes: {
-      type: 'text/javascript'
-    }
   }
-  const fallbackJsFiles = files.map(file => `'${file}':['${path.join(cdnUrl,file)}', '${file}']`).join(',');
-  tag.innerHTML=`fallback.load({${fallbackJsFiles}});`;
+  const fallbackJsFiles = files.map(file => `loadJs(['${path.join(cdnUrl,file)}', '${file}']);`).join('');
+  tag.innerHTML=fallbackJsFiles;
   return tag;
 };
 

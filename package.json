@@ -1,6 +1,6 @@
 {
   "name": "html-webpack-cdn-fallback-plugin",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Load all your js dependencies from a cdn and fallback to self hosting",
   "main": "index.js",
   "types": "index.d.ts",
@@ -17,10 +17,9 @@
     "plugin",
     "html-webpack-plugin",
     "cdn",
-    "fallback",
-    "fallbackjs"
+    "fallback"
   ],
-  "author": "Marcel Springer <marcell.springer@emcellsoft.de>",
+  "author": "Marcel Springer <marcel.springer@emcellsoft.de>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/emcell/html-webpack-cdn-fallback-plugin/issues"
@@ -39,7 +38,6 @@
   },
   "dependencies": {
     "escape-string-regexp": "^1.0.5",
-    "fallbackjs": "^1.1.8",
     "nodegit": "^0.26.5"
   }
 }
