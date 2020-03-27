@@ -56,7 +56,7 @@ HtmlWebpackCdnFallbackPlugin.prototype.createFallbackJsScriptTag = function () {
     tagName: 'script',
     closeTag: false,
     attributes: {
-      src: '/fallback.min.js'
+      src: './fallback.min.js'
     }
   }
 };
