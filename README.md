@@ -68,3 +68,27 @@ Options
 `cdnUrl`
 
 Can be either a string or a function returning a string. `:version` will be replaced with the veriosn of your package.json. `:commit` will be replaced with the commit sha of your repository. 
+
+
+Usage with react-app-rewired
+----------------------------
+
+config-override.js
+```javascript
+const HtmlWebPackCdnFallbackPlugin = require('html-webpack-cdn-fallback-plugin');
+module.exports = override(
+    function(config) {
+        let htmlWebPackPlugin = config.plugins.find(plugin => plugin.constructor.name==='HtmlWebpackPlugin');
+        if(htmlWebPackPlugin){
+            config.plugins.push(
+                new HtmlWebPackCdnFallbackPlugin(htmlWebPackPlugin.constructor,{
+                    cdnUrl: 'https://your-cdn.de/basepath/:version/'
+                })
+            );
+        }
+        
+        return config;
+    }
+);
+
+```
