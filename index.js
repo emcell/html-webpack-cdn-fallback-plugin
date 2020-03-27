@@ -2,6 +2,7 @@
 var path = require('path');
 var fs = require('fs');
 var Git = require( 'nodegit' );
+const url = require('url');
 
 function HtmlWebpackCdnFallbackPlugin (htmlWebpackPlugin, options) {
   this.htmlWebpackPlugin = htmlWebpackPlugin;
@@ -56,11 +57,19 @@ HtmlWebpackCdnFallbackPlugin.prototype.processHead = function (_headTags, cdnUrl
   return headTags;
 };
 
+function resolve(cdnUrl, filepath){
+  if(!cdnUrl.endsWith('/'))
+    cdnUrl+='/';
+  if(filepath.startsWith('/'))
+    filepath = filepath.substring(1);
+  return cdnUrl+filepath;
+}
+
 HtmlWebpackCdnFallbackPlugin.prototype.createCssLoaderForLinkTag= function (tag, cdnUrl){
   return {
     tagName: 'script',
     closTag: true,
-    innerHTML: `loadCss(['${path.join(cdnUrl,tag.attributes.href)}', '${tag.attributes.href}'],document.currentScript);`
+    innerHTML: `loadCss(['${resolve(cdnUrl,tag.attributes.href)}', '${tag.attributes.href}'],document.currentScript);`
   }
 };
 
@@ -129,7 +138,7 @@ HtmlWebpackCdnFallbackPlugin.prototype.createFallbackScriptLoaderTag = function 
     tagName: 'script',
     closeTag: true,
   }
-  const fallbackJsFiles = files.map(file => `loadJs(['${path.join(cdnUrl,file)}', '${file}']);`).join('');
+  const fallbackJsFiles = files.map(file => `loadJs(['${resolve(cdnUrl,file)}', '${file}']);`).join('');
   tag.innerHTML=fallbackJsFiles;
   return tag;
 };
