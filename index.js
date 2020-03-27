@@ -34,9 +34,40 @@ HtmlWebpackCdnFallbackPlugin.prototype.apply = function (compiler) {
 HtmlWebpackCdnFallbackPlugin.prototype.processTags = function (compilation, cdnUrl, pluginData) {
   var self = this;
 
+  const bodyTags = self.processBody(pluginData.bodyTags, cdnUrl)
+  const headTags = self.processHead(pluginData.headTags, cdnUrl);
+  return { headTags: headTags, bodyTags: bodyTags, plugin: pluginData.plugin, outputName: pluginData.outputName };
+};
+
+HtmlWebpackCdnFallbackPlugin.prototype.processHead = function (_headTags, cdnUrl) {
+  const headTags = [];  
+  let cssLoaderInserted=false;
+  _headTags.forEach(tag => {
+    if(tag.tagName==='link' &&  tag.attributes && tag.attributes.href && tag.attributes.rel==='stylesheet'){
+      if(!cssLoaderInserted){
+        headTags.push(this.createLoadCssScriptTag());
+        cssLoaderInserted=true;
+      }
+      headTags.push(this.createCssLoaderForLinkTag(tag, cdnUrl));
+    }
+    else
+      headTags.push(tag);
+  });
+  return headTags;
+};
+
+HtmlWebpackCdnFallbackPlugin.prototype.createCssLoaderForLinkTag= function (tag, cdnUrl){
+  return {
+    tagName: 'script',
+    closTag: true,
+    innerHTML: `loadCss(['${path.join(cdnUrl,tag.attributes.href)}', '${tag.attributes.href}'],document.currentScript);`
+  }
+};
+
+HtmlWebpackCdnFallbackPlugin.prototype.processBody = function (_bodyTags, cdnUrl) {
   const scriptTagsWithSrcAttribute = [];
   const bodyTags = [];  
-  pluginData.bodyTags.forEach(tag => {
+  _bodyTags.forEach(tag => {
     if(tag.tagName==='script' && tag.attributes && tag.attributes.src)
       scriptTagsWithSrcAttribute.push(tag);
     else
@@ -46,13 +77,23 @@ HtmlWebpackCdnFallbackPlugin.prototype.processTags = function (compilation, cdnU
     bodyTags.push(this.createFallbackJsScriptTag());
     bodyTags.push(this.createFallbackScriptLoaderTag(scriptTagsWithSrcAttribute, cdnUrl));
   }
-  return { headTags: pluginData.headTags, bodyTags: bodyTags, plugin: pluginData.plugin, outputName: pluginData.outputName };
+  return bodyTags;
 };
+
+HtmlWebpackCdnFallbackPlugin.prototype.createLoadCssScriptTag = function () {
+  return {
+    tagName: 'script',
+    closeTag: true,
+    innerHTML: fs.readFileSync(path.join(__dirname, 'loadCss.js'))
+  }
+
+};
+
 HtmlWebpackCdnFallbackPlugin.prototype.createFallbackJsScriptTag = function () {
   return {
     tagName: 'script',
     closeTag: true,
-    innerHTML: "function loadJs(urls) {const url = urls[0];urls = urls.slice(1);var scriptTag = document.createElement('script');scriptTag.src = url;if(urls.length)scriptTag.onerror=function(){loadJs(urls);};document.body.appendChild(scriptTag);}"
+    innerHTML: fs.readFileSync(path.join(__dirname, 'loadJs.js'))
   }
 };
 
